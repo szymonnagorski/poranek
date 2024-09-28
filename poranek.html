@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Bar</title>
+    <style>
+        .progress-container {
+            width: 100%;
+            background-color: #f3f3f3;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 20px;
+            display: flex;
+            position: relative;
+        }
+        .progress-bar {
+            height: 30px;
+            text-align: center;
+            color: white;
+            line-height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .part1 { width: 0%; background-color: #4caf50; }
+        .part2 { width: 0%; background-color: #4caf50; }
+        .part3 { width: 0%; background-color: #4caf50; }
+        .separator {
+            width: 2px;
+            background-color: #000;
+            position: absolute;
+            height: 100%;
+        }
+        .separator1 { left: 33.33%; }
+        .separator2 { left: 66.66%; }
+        .icon {
+            font-size: 20px;
+            vertical-align: middle;
+            position: absolute;
+            top: 5px;
+        }
+        .icon1 { left: 16.66%; }
+        .icon2 { left: 50%; }
+        .icon3 { left: 83.33%; }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <h1>Progress Bar</h1>
+    <div class="progress-container">
+        <div class="progress-bar part1"></div>
+        <div class="separator separator1"></div>
+        <div class="progress-bar part2"></div>
+        <div class="separator separator2"></div>
+        <div class="progress-bar part3"></div>
+        <i class="fas fa-tshirt icon icon1"></i>
+        <i class="fas fa-utensils icon icon2"></i>
+        <i class="fas fa-tooth icon icon3"></i>
+    </div>
+    <!-- <button onclick="startProgressBar()">Start Progress Bar</button> -->
+
+    <script>
+        const part1Duration = 10 * 60; // 5 minutes in seconds
+        const part2Duration = 15 * 60; // 5 minutes in seconds
+        const part3Duration = 8 * 60;  // 5 minutes in seconds
+
+        function interpolateColor(progress) {
+            const r = Math.floor(76 + (244 - 76) * progress);
+            const g = Math.floor(175 - 175 * progress);
+            const b = Math.floor(80 - 80 * progress);
+            return `rgb(${r},${g},${b})`;
+        }
+
+        function startProgressBar() {
+            const part1 = document.querySelector('.part1');
+            const part2 = document.querySelector('.part2');
+            const part3 = document.querySelector('.part3');
+
+            const totalDuration = part1Duration + part2Duration + part3Duration;
+            let elapsedTime = 0;
+
+            const interval = setInterval(() => {
+                elapsedTime++;
+                const part1Progress = Math.min(elapsedTime / part1Duration, 1);
+                const part2Progress = Math.min((elapsedTime - part1Duration) / part2Duration, 1);
+                const part3Progress = Math.min((elapsedTime - part1Duration - part2Duration) / part3Duration, 1);
+
+                part1.style.width = `${part1Progress * 33.33}%`;
+                part2.style.width = `${part2Progress * 33.33}%`;
+                part3.style.width = `${part3Progress * 33.33}%`;
+
+                part1.style.backgroundColor = interpolateColor(part1Progress);
+                part2.style.backgroundColor = interpolateColor(part2Progress);
+                part3.style.backgroundColor = interpolateColor(part3Progress);
+
+                if (elapsedTime >= totalDuration) {
+                    clearInterval(interval);
+                }
+            }, 1000); // Update every second
+        }
+
+        function checkTimeAndStart() {
+            const now = new Date();
+            const startTime = new Date();
+            startTime.setHours(6, 50, 0, 0);
+
+            if (now >= startTime) {
+                startProgressBar();
+            } else {
+                const timeToStart = startTime - now;
+                setTimeout(startProgressBar, timeToStart);
+            }
+        }
+
+        checkTimeAndStart();
+    </script>
+</body>
+</html>
